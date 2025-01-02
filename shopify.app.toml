@@ -1,0 +1,20 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "c180a637cb14ed60eadeb4dc704d261b"
+application_url = "https://shopify.dev/apps/default-app-home"
+embedded = true
+name = "SNS-FBT"
+handle = "sns-fbt"
+
+[webhooks]
+api_version = "2025-01"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = ""
+
+[auth]
+redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+
+[pos]
+embedded = false
