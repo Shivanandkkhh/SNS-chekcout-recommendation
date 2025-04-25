@@ -11,7 +11,7 @@ api_version = "2025-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = ""
+scopes = "read_products,read_content"
 
 [auth]
 redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
@@ -21,6 +21,7 @@ embedded = false
 
 [build]
 dev_store_url = "checkout-shiv.myshopify.com"
+include_config_on_deploy = true
 
 [[extensions]]
 name = "product-offer"
@@ -33,3 +34,9 @@ handle = "product-offer"
 
   [extensions.capabilities]
   api_access = true
+  network_access = true
+  block_progress = false
+
+[[extensions.metafields.read]]
+namespace = "custom"
+key = "upsell_products"
