@@ -21,3 +21,15 @@ embedded = false
 
 [build]
 dev_store_url = "checkout-shiv.myshopify.com"
+
+[[extensions]]
+name = "product-offer"
+type = "ui_extension"
+handle = "product-offer"
+
+  [[extensions.targeting]]
+  module = "./src/Checkout.jsx"
+  target = "purchase.checkout.block.render"
+
+  [extensions.capabilities]
+  api_access = true
