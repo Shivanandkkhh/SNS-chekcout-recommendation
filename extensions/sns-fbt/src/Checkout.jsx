@@ -20,7 +20,11 @@ import {
 export default reactExtension("purchase.checkout.block.render", () => <App />);
 
 // Default collection ID to use if metafield is not found
-const DEFAULT_COLLECTION_ID = "gid://shopify/Collection/280377393230";
+const DEFAULT_COLLECTION_ID = "gid://shopify/Collection/280567447630";
+
+// Storefront API configuration
+const STOREFRONT_API_URL = "https://checkout-shiv.myshopify.com/api/2023-10/graphql.json";
+const STOREFRONT_ACCESS_TOKEN = "82ac66cc3e7eb3908da25750891eb657-1745838623";
 
 function App() {
   const { query, i18n } = useApi();
@@ -56,71 +60,69 @@ function App() {
     }
   }
 
-  async function fetchProducts() {
-    setLoading(true);
+  // Function to fetch metafields from a specific page using Storefront API
+  async function fetchPageMetafields() {
     try {
-      // First attempt to get metafields for collection ID
-      let collectionId = DEFAULT_COLLECTION_ID;
-      
-      try {
-        // Query for the page and its metafields
-        const { data: metafieldData } = await query(
-          `query {
-            pages(first: 1, query: "handle:global-cart-data") {
-              nodes {
-                id
-                metafields(first: 10, namespace: "custom") {
-                  edges {
-                    node {
-                      namespace
-                      key
-                      value
-                    }
-                  }
+      const response = await fetch(STOREFRONT_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN
+        },
+        body: JSON.stringify({
+          query: `
+            query {
+              page(handle: "global-data-for-checkout-ui-extension-do-not-delete") {
+                metafield(namespace: "custom", key: "upsell_products") {
+                  value
                 }
               }
             }
-          }`
-        );
-  
-        console.log("Metafield data:", metafieldData);
-  
-        if (metafieldData && metafieldData.pages && metafieldData.pages.nodes.length > 0) {
-          // Extract the upsell_products metafield
-          const metafields = metafieldData.pages.nodes[0]?.metafields?.edges || [];
-          const upsellMetafield = metafields.find(
-            edge => edge.node.key === "upsell_products"
-          );
-  
-          console.log('upsellMetafield:', upsellMetafield);
-  
-          // Get the collection ID directly from the metafield value
-          if (upsellMetafield && upsellMetafield.node.value) {
-            collectionId = upsellMetafield.node.value;
-            console.log("Found collection ID in metafield:", collectionId);
-          } else {
-            console.log("No upsell_products metafield found, using default collection");
-          }
+          `
+        })
+      });
+
+      const { data, errors } = await response.json();
+      
+      if (errors) {
+        console.error('GraphQL errors:', errors);
+        return null;
+      }
+
+      return data?.page?.metafield?.value || null;
+    } catch (error) {
+      console.error('Error fetching metafields:', error);
+      return null;
+    }
+  }
+
+  async function fetchProducts() {
+    setLoading(true);
+    try {
+      let collectionId = DEFAULT_COLLECTION_ID;
+      
+      // First try to get the collection ID from metafields
+      try {
+        const metafieldValue = await fetchPageMetafields();
+        console.log("Metafield value:", metafieldValue);
+        
+        if (metafieldValue) {
+          collectionId = metafieldValue;
+          console.log("Using collection ID from metafield:", collectionId);
         } else {
-          console.log("No page data found, using default collection");
+          console.log("No metafield found, using default collection ID");
         }
       } catch (metafieldError) {
         console.error("Error fetching metafields:", metafieldError);
         console.log("Using default collection due to metafield error");
       }
-  
+
       // Format the collection ID if needed
       if (!collectionId.startsWith("gid://")) {
         collectionId = `gid://shopify/Collection/${collectionId}`;
       }
-  
-      console.log("Using collection ID:", collectionId);
-  
-      // Now fetch products from the specified collection
-      // Rest of your code remains the same...
 
-
-
+      console.log("Final collection ID being used:", collectionId);
 
       // Now fetch products from the specified collection
       const { data } = await query(
