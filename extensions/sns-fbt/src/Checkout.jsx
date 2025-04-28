@@ -20,7 +20,7 @@ import {
 export default reactExtension("purchase.checkout.block.render", () => <App />);
 
 // Default collection ID to use if metafield is not found
-const DEFAULT_COLLECTION_ID = "gid://shopify/Collection/280567447630";
+const DEFAULT_COLLECTION_ID = "gid://shopify/Collection/373996585141";
 
 // Storefront API configuration
 const STOREFRONT_API_URL = "https://checkout-shiv.myshopify.com/api/2023-10/graphql.json";
