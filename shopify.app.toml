@@ -39,4 +39,4 @@ handle = "product-offer"
 
 [[extensions.metafields.read]]
 namespace = "custom"
-key = "upsell_products"
+key = "upsell_product_checkout"
