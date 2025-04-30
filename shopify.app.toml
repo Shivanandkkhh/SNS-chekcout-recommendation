@@ -7,11 +7,11 @@ name = "SNS-FBT"
 handle = "sns-fbt"
 
 [webhooks]
-api_version = "2025-04"
+api_version = "2025-01"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products,read_content, unauthenticated_read_product_listings, unauthenticated_read_product_tags, unauthenticated_read_product_inventory,write_products,write_orders,write_customers,write_files,read_discounts,write_draft_orders,write_inventory,write_publications,read_checkouts,write_checkouts, unauthenticated_read_content"
+scopes = "read_products,read_content, unauthenticated_read_product_listings, unauthenticated_read_product_tags, unauthenticated_read_product_inventory,write_products,write_orders,write_customers,write_files,read_discounts,write_draft_orders,write_inventory,write_publications"
 
 [auth]
 redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
@@ -20,7 +20,7 @@ redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
 embedded = false
 
 [build]
-dev_store_url = "testingthecheckout.myshopify.com"
+dev_store_url = "checkout-shiv.myshopify.com"
 include_config_on_deploy = true
 
 [[extensions]]
@@ -39,4 +39,4 @@ handle = "product-offer"
 
 [[extensions.metafields.read]]
 namespace = "custom"
-key = "upsell_product_checkout"
+key = "upsell_products"

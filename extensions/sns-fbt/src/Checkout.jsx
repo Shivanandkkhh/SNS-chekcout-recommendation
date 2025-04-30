@@ -14,14 +14,14 @@ import {
   useCartLines,
   useApplyCartLinesChange,
   useApi,
-  useAppMetafields,
+  useMetafield,
   Select,
 } from "@shopify/ui-extensions-react/checkout";
 
 export default reactExtension("purchase.checkout.block.render", () => <App />);
 
 function App() {
-  const { query, i18n, ...rest } = useApi();
+  const { query, i18n } = useApi();
   const applyCartLinesChange = useApplyCartLinesChange();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,31 +30,19 @@ function App() {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [showVariantSelectors, setShowVariantSelectors] = useState({});
   const lines = useCartLines();
-  const metafield = []
 
-  const fetchCheckoutPageMetafieldCollection = async () => {
-    const { data: { pageByHandle } } = await query(`query fetchCheckoutPageMetafield($handle: String!) {
-      pageByHandle(handle: $handle) {
-        id
-        handle
-        metafield(namespace: 'custom', key: 'upsell_product_checkout') {
-          value
-        }
-      }
-    }`, {
-      variables: {
-        handle: 'global-data-for-checkout-ui-extension-do-not-delete'
-      }
-    });
-    return pageByHandle.metafield.value
-  }
+  const metafield = useMetafield({
+    namespace: "custom",
+    key: "upsell_product_checkout",
+  });
 
-  
+  console.log('metafield',metafield)
+
   useEffect(() => {
     async function fetchProducts() {
-      const collectionHandle = await fetchCheckoutPageMetafieldCollection()
       try {
         if (metafield?.value) {
+          const collectionHandle = metafield.value.trim();
           const { data } = await query(
             `query ($handle: String!, $first: Int!) {
               collection(handle: $handle) {
@@ -84,12 +72,10 @@ function App() {
             {
               variables: {
                 handle: collectionHandle,
-                first: 50,
+                first: 5,
               },
             }
           );
-
-          console.log('data',data)
 
           if (data?.collection?.products?.nodes) {
             setProducts(data.collection.products.nodes);
@@ -133,8 +119,6 @@ function App() {
           { variables: { first: 5 } }
         );
 
-        // console.log('data',data)
-
         setProducts(data?.products?.nodes || []);
         const initialSelected = {};
         data?.products?.nodes.forEach((product) => {
@@ -152,7 +136,7 @@ function App() {
     }
 
     fetchProducts();
-  }, [query]);
+  }, [query, metafield]);
 
   async function handleAddToCart(productId) {
     const variantId = selectedVariants[productId];
