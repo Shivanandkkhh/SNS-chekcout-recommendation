@@ -3,7 +3,7 @@
 
 # The version of APIs your extension will receive. Learn more:
 # https://shopify.dev/docs/api/usage/versioning
-api_version = "2024-10"
+api_version = "2025-04"
 
 [[extensions]]
 name = "SNS-FBT"
@@ -33,9 +33,9 @@ api_access = true
 # products, customers, and more. Learn more:
 # https://shopify.dev/docs/api/checkout-ui-extensions/unstable/configuration#metafields
 
-# [[extensions.metafields]]
-# namespace = "my_namespace"
-# key = "my_key"
+[[extensions.metafields]]
+namespace = "custom"
+key = "upsell_product_checkout"
 # [[extensions.metafields]]
 # namespace = "my_namespace"
 # key = "my_other_key"
